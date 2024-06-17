@@ -130,12 +130,13 @@ void BSP_reset (void)
         HARD_RESET_NOW();
 }
 
-void mpsc_console_initialize(void);
+// void mpsc_console_initialize(void);
 
 
 void config_BSP(char *command, int len)
 {
-        mpsc_console_initialize();
+        // mpsc_console_initialize();
+        mc68681_console_initialize();
 
         mach_sched_init      = BSP_sched_init;
         mach_tick            = BSP_tick;

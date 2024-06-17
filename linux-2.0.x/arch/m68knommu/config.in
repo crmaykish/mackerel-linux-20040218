@@ -198,6 +198,7 @@ fi
 
 if [ "$CONFIG_M68000" = "y" ]; then
 	bool 'Weiss-Electronic SM2010 support' CONFIG_SM2010
+	bool 'Mackerel 68008 support' CONFIG_MACKEREL
 fi
 
 if [ "$CONFIG_PILOT3" = "y" -o \
