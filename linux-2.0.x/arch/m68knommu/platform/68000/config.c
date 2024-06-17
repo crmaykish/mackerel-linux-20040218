@@ -44,51 +44,22 @@
 #include <asm/irq.h>
 #include <asm/machdep.h>
 
-#include "SM2010/sm2010_hw.h"
+#include <asm/mackerel.h>
+
 void config_M68000_irq(void);
 
-/* initialize timer hardware */
-static void sm2010_init_timer_hw(void)
-{
-        /* Timer 0 controlwort out = low MODE 0*/
-        SM2010_TIMER.control    = 0x30;
-        SM2010_TIMER.counter0   = 0;
-        SM2010_TIMER.counter0   = 0;
-        /* Timer 2 nur controlwort out = high MODE 2*/
-        SM2010_TIMER.control    = 0xb4;
-
-        /* timer2 auf 2ms initialisieren */
-        SM2010_TIMER.counter2   = ((SM2010_SIO_CLOCK_SYS / 500)) & 0xff;
-        SM2010_TIMER.counter2   = ((SM2010_SIO_CLOCK_SYS / 500)) >> 8;
-        SM2010_RESET_TIMER_INT2 = 0;
-        SM2010_TIMER.control    = 0x74;
-        SM2010_TIMER.counter1   = (SM2010_SIO_CLOCK_SYS / 1000) & 0xff;
-        SM2010_TIMER.counter1   = (SM2010_SIO_CLOCK_SYS / 1000) >> 8;
-}
-
-static void timer1_interrupt(int irq, void *dummy, struct pt_regs * regs)
-{
-        SM2010_RESET_TIMER_INT1 = 0;
-}
 
 static void 
 BSP_sched_init(void (*timer_routine)(int, void *, struct pt_regs *))
 {
-        /* initialize timer */
-        sm2010_init_timer_hw();
-        request_irq(SM2010_INT_NUM_TIMER2-VEC_SPUR, 
-                    timer_routine, IRQ_FLG_LOCK, "timer2", NULL);
-        request_irq(SM2010_INT_NUM_TIMER1-VEC_SPUR, 
-                    timer1_interrupt, IRQ_FLG_LOCK, "timer1", NULL);
+        // TODO
 
-        printk("\nMC68000 SM2010 support (C) 2002 Weiss-Electronic GmbH, "
-               "Guido Classen\n");
+        printk("Mackerel 68k support by Colin Maykish 2024\n");
 }
 
 void BSP_tick(void)
 {
-        /* Reset Timer2 */
-        SM2010_RESET_TIMER_INT2 = 0;
+
 }
 
 unsigned long BSP_gettimeoffset(void)
@@ -130,12 +101,19 @@ void BSP_reset (void)
         HARD_RESET_NOW();
 }
 
-// void mpsc_console_initialize(void);
-
-
 void config_BSP(char *command, int len)
 {
-        // mpsc_console_initialize();
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+        duart_putc('M');
+
         mc68681_console_initialize();
 
         mach_sched_init      = BSP_sched_init;
@@ -150,8 +128,6 @@ void config_BSP(char *command, int len)
 
         config_M68000_irq();
 
-        /* enable interrupts :-) */
-        SM2010_BOARD_CONTROL = 0x1f;  
 }
 
 /*

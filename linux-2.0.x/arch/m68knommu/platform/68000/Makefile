@@ -12,7 +12,7 @@
 
 all: $(BOARD)/crt0_$(MODEL).o entry.o platform.o
 O_TARGET := platform.o
-O_OBJS := entry.o config.o signal.o traps.o ints.o $(OBJECTS)
+O_OBJS := entry.o config.o signal.o traps.o ints.o mackerel.o $(OBJECTS)
 
 $(BOARD)/crt0_$(MODEL).o: $(BOARD)/crt0_$(MODEL).S
 

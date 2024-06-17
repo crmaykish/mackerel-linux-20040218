@@ -52,7 +52,8 @@
 /*
  * Platform
  */
-#define CONFIG_SM2010 1
+#undef  CONFIG_SM2010
+#define CONFIG_MACKEREL 1
 #define CONFIG_RAMAUTO 1
 #undef  CONFIG_RAM05MB
 #undef  CONFIG_RAM1MB
@@ -73,7 +74,7 @@
  * General setup
  */
 #undef  CONFIG_PCI
-#define CONFIG_NET 1
+#undef  CONFIG_NET
 #undef  CONFIG_SYSVIPC
 #define CONFIG_REDUCED_MEMORY 1
 #define CONFIG_BINFMT_FLAT 1
@@ -102,59 +103,6 @@
 #undef  CONFIG_BLK_DEV_NFA
 
 /*
- * Networking options
- */
-#undef  CONFIG_FIREWALL
-#undef  CONFIG_NET_ALIAS
-#define CONFIG_INET 1
-#undef  CONFIG_IP_FORWARD
-#undef  CONFIG_IP_MULTICAST
-#undef  CONFIG_SYN_COOKIES
-#undef  CONFIG_IP_ACCT
-#undef  CONFIG_IP_ROUTER
-#undef  CONFIG_NET_IPIP
-
-/*
- * (it is safe to leave these untouched)
- */
-#undef  CONFIG_INET_PCTCP
-#undef  CONFIG_INET_RARP
-#undef  CONFIG_NO_PATH_MTU_DISCOVERY
-#undef  CONFIG_IP_NOSR
-#undef  CONFIG_SKB_LARGE
-
-/*
- *  
- */
-#undef  CONFIG_IPX
-#undef  CONFIG_ATALK
-#undef  CONFIG_AX25
-#undef  CONFIG_BRIDGE
-#undef  CONFIG_NETLINK
-#undef  CONFIG_IPSEC
-
-/*
- * Network device support
- */
-#define CONFIG_NETDEVICES 1
-#undef  CONFIG_DUMMY
-#define CONFIG_SLIP 1
-#define CONFIG_SLIP_COMPRESSED 1
-#undef  CONFIG_SLIP_SMART
-#undef  CONFIG_SLIP_MODE_SLIP6
-#define CONFIG_PPP 1
-
-/*
- * CCP compressors for PPP are only built as modules.
- */
-#undef  CONFIG_EQUALIZER
-#undef  CONFIG_UCCS8900
-#undef  CONFIG_SMC9194
-#undef  CONFIG_SMC91111
-#undef  CONFIG_NE2000
-#undef  CONFIG_FEC
-
-/*
  * Filesystems
  */
 #undef  CONFIG_QUOTA
@@ -164,9 +112,6 @@
 #undef  CONFIG_XIA_FS
 #undef  CONFIG_NLS
 #define CONFIG_PROC_FS 1
-#define CONFIG_NFS_FS 1
-#undef  CONFIG_ROOT_NFS
-#undef  CONFIG_SMB_FS
 #undef  CONFIG_HPFS_FS
 #undef  CONFIG_SYSV_FS
 #undef  CONFIG_AUTOFS_FS
@@ -178,14 +123,13 @@
 /*
  * Character devices
  */
-#define CONFIG_72001_SERIAL 1
+#undef  CONFIG_72001_SERIAL
 #undef  CONFIG_DS1743
 
 /*
  * Sound support
  */
 #undef  CONFIG_M5249AUDIO
-#undef  CONFIG_AD1845
 
 /*
  * Kernel hacking

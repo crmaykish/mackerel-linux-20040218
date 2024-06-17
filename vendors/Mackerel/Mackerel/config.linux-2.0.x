@@ -51,6 +51,7 @@ CONFIG_CLOCK_AUTO=y
 #
 # Platform
 #
+# CONFIG_SM2010 is not set
 CONFIG_MACKEREL=y
 CONFIG_RAMAUTO=y
 # CONFIG_RAM05MB is not set
@@ -72,7 +73,7 @@ CONFIG_ROMKERNEL=y
 # General setup
 #
 # CONFIG_PCI is not set
-CONFIG_NET=n
+# CONFIG_NET is not set
 # CONFIG_SYSVIPC is not set
 CONFIG_REDUCED_MEMORY=y
 CONFIG_BINFMT_FLAT=y
@@ -101,59 +102,6 @@ CONFIG_BLK_DEV_RAM=y
 # CONFIG_BLK_DEV_NFA is not set
 
 #
-# Networking options
-#
-# CONFIG_FIREWALL is not set
-# CONFIG_NET_ALIAS is not set
-CONFIG_INET=n
-# CONFIG_IP_FORWARD is not set
-# CONFIG_IP_MULTICAST is not set
-# CONFIG_SYN_COOKIES is not set
-# CONFIG_IP_ACCT is not set
-# CONFIG_IP_ROUTER is not set
-# CONFIG_NET_IPIP is not set
-
-#
-# (it is safe to leave these untouched)
-#
-# CONFIG_INET_PCTCP is not set
-# CONFIG_INET_RARP is not set
-# CONFIG_NO_PATH_MTU_DISCOVERY is not set
-# CONFIG_IP_NOSR is not set
-# CONFIG_SKB_LARGE is not set
-
-#
-#  
-#
-# CONFIG_IPX is not set
-# CONFIG_ATALK is not set
-# CONFIG_AX25 is not set
-# CONFIG_BRIDGE is not set
-# CONFIG_NETLINK is not set
-# CONFIG_IPSEC is not set
-
-#
-# Network device support
-#
-CONFIG_NETDEVICES=n
-# CONFIG_DUMMY is not set
-CONFIG_SLIP=n
-CONFIG_SLIP_COMPRESSED=n
-# CONFIG_SLIP_SMART is not set
-# CONFIG_SLIP_MODE_SLIP6 is not set
-CONFIG_PPP=n
-
-#
-# CCP compressors for PPP are only built as modules.
-#
-# CONFIG_EQUALIZER is not set
-# CONFIG_UCCS8900 is not set
-# CONFIG_SMC9194 is not set
-# CONFIG_SMC91111 is not set
-# CONFIG_NE2000 is not set
-# CONFIG_FEC is not set
-
-#
 # Filesystems
 #
 # CONFIG_QUOTA is not set
@@ -163,9 +111,6 @@ CONFIG_EXT2_FS=y
 # CONFIG_XIA_FS is not set
 # CONFIG_NLS is not set
 CONFIG_PROC_FS=y
-CONFIG_NFS_FS=n
-# CONFIG_ROOT_NFS is not set
-# CONFIG_SMB_FS is not set
 # CONFIG_HPFS_FS is not set
 # CONFIG_SYSV_FS is not set
 # CONFIG_AUTOFS_FS is not set
@@ -177,15 +122,13 @@ CONFIG_ROMFS_FS=y
 #
 # Character devices
 #
-CONFIG_FT245_SERIAL=y
-CONFIG_72001_SERIAL=n
+# CONFIG_72001_SERIAL is not set
 # CONFIG_DS1743 is not set
 
 #
 # Sound support
 #
 # CONFIG_M5249AUDIO is not set
-# CONFIG_AD1845 is not set
 
 #
 # Kernel hacking
