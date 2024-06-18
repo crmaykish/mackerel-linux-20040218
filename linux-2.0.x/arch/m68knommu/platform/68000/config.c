@@ -49,6 +49,8 @@
 #include <asm/traps.h>
 #include <asm/mackerel.h>
 
+void mackerel_console_initialize(void);
+
 void config_M68000_irq(void);
 
 /* initialize timer hardware */
@@ -72,7 +74,6 @@ void config_M68000_irq(void);
 
 static void mackerel_init_timer_hw(void)
 {
-        printk("Setting up timer hardware\n");
         // Setup DUART timer as 50 Hz interrupt
         MEM(DUART_IVR) = 65;   // Interrupt base register
         MEM(DUART_ACR) = 0xF0; // Set timer mode X/16
@@ -165,11 +166,11 @@ void BSP_reset(void)
         HARD_RESET_NOW();
 }
 
-void mpsc_console_initialize(void);
-
 void config_BSP(char *command, int len)
 {
         // mpsc_console_initialize();
+
+        mackerel_console_initialize();
 
         mach_sched_init = BSP_sched_init;
         mach_tick = BSP_tick;

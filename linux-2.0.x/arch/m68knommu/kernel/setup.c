@@ -377,9 +377,9 @@ void setup_arch(char **cmdline_p,
 #endif
 #endif
 
-// #ifdef DEBUG
+#ifdef DEBUG
 	printk("Done setup_arch\n");
-// #endif
+#endif
 
 }
 

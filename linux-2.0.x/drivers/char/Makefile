@@ -487,7 +487,7 @@ ifeq ($(CONFIG_72001_SERIAL),y)
 L_OBJS += pd72001_serial.o
 endif
 
-L_OBJS += mc68681_serial.o
+L_OBJS += 68681serial.o
 
 include $(TOPDIR)/Rules.make
 

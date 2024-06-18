@@ -2148,5 +2148,8 @@ int tty_init(void)
 #ifdef CONFIG_CONSOLE
 	vcs_init();
 #endif
+
+	mackerel_init();
+
 	return 0;
 }

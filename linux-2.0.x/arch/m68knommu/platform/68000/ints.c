@@ -109,8 +109,6 @@ static void M68000_init_IRQ(void)
 {
 	int i;
 
-	printk("ramvec: %p\n", _ramvec);
-
 #if 1
         for (i=2; i<=0xff; ++i) {
           _ramvec[i] = bad_interrupt;

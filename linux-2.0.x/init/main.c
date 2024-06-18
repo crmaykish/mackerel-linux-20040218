@@ -988,8 +988,6 @@ asmlinkage void start_kernel(void)
 {
 	char * command_line;
 
-	duart_putc('H');
-
 /*
  *	This little check will move.
  */

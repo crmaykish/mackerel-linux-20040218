@@ -197,20 +197,11 @@ asmlinkage int printk(const char *fmt, ...)
 			if (*p == '\n')
 				break;
 		}
-		if (msg_level < 8 /* && console_print_proc */) {
+		if (msg_level < 8  && console_print_proc) {
 			char tmp = p[1];
 			int i = 0;
 			p[1] = '\0';
-
-			// TODO: hack to avoid writing a serial driver
-
-			// (*console_print_proc)(msg);
-			
-			while (msg[i] != 0) {
-				duart_putc(msg[i]);
-				i++;
-			}
-
+			(*console_print_proc)(msg);
 			p[1] = tmp;
 		}
 		if (*p == '\n')
