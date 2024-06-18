@@ -60,16 +60,16 @@ extern e_vector vectors[];
 #define	VEC_UNIMPEA (60)
 #define	VEC_UNIMPII (61)
 
-#if defined (CONFIG_M68360) || defined (CONFIG_CPU32) || defined(CONFIG_M68000) || defined(CONFIG_M68332)
-#define VEC_SPUR    (24)
-#define VEC_INT1    (25)
-#define VEC_INT2    (26)
-#define VEC_INT3    (27)
-#define VEC_INT4    (28)
-#define VEC_INT5    (29)
-#define VEC_INT6    (30)
-#define VEC_INT7    (31)
-#else
+// #if defined (CONFIG_M68360) || defined (CONFIG_CPU32) || defined(CONFIG_M68000) || defined(CONFIG_M68332)
+// #define VEC_SPUR    (24)
+// #define VEC_INT1    (25)
+// #define VEC_INT2    (26)
+// #define VEC_INT3    (27)
+// #define VEC_INT4    (28)
+// #define VEC_INT5    (29)
+// #define VEC_INT6    (30)
+// #define VEC_INT7    (31)
+// #else
 #define VEC_SPUR    (64)
 #define VEC_INT1    (65)
 #define VEC_INT2    (66)
@@ -78,7 +78,7 @@ extern e_vector vectors[];
 #define VEC_INT5    (69)
 #define VEC_INT6    (70)
 #define VEC_INT7    (71)
-#endif
+// #endif
 
 #define VECOFF(vec) ((vec)<<2)
 

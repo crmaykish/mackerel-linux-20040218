@@ -109,6 +109,8 @@ static void M68000_init_IRQ(void)
 {
 	int i;
 
+	printk("ramvec: %p\n", _ramvec);
+
 #if 1
         for (i=2; i<=0xff; ++i) {
           _ramvec[i] = bad_interrupt;
@@ -129,7 +131,7 @@ static void M68000_init_IRQ(void)
 	_ramvec[VEC_COPROC]     = trap13;
 	_ramvec[VEC_FORMAT]     = trap14;
 	_ramvec[VEC_UNINT]      = trap15;
-        
+    
 	_ramvec[VEC_INT1]       = inthandler1;
 	_ramvec[VEC_INT2]       = inthandler2;
 	_ramvec[VEC_INT3]       = inthandler3;
@@ -140,7 +142,7 @@ static void M68000_init_IRQ(void)
         
 	_ramvec[VEC_SYS]        = system_call;
 
- 
+
 	/* initialize handlers */
 	for (i = 0; i < INTERNAL_IRQS; i++) {
 		int_irq_list[i] = NULL;

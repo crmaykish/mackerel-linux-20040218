@@ -166,6 +166,10 @@ extern char _ebss;
 #define CAT_ROMARRAY
 #endif
 
+#if defined( CONFIG_MACKEREL ) 
+#define CAT_ROMARRAY
+#endif
+
 /******* END OF BOARD-SPECIFIC CONFIGURATION ************/
 
 /* Simple romfs, at internal, cat on the end of kernel, or seperate fixed adderess romfs. */
@@ -297,295 +301,298 @@ struct arena_t {
 	unsigned int did_erase_bits;*/
 
 } arena[] = {
+  {0, 0, -1},
+  #define FIXUP_ARENAS \
+          arena[0].address = (unsigned long)0x300000;
+          
+// #ifdef INTERNAL_ROMARRAY
+// 	{0, (unsigned long)romarray, sizeof(romarray)},
+// #endif
 
-#ifdef INTERNAL_ROMARRAY
-	{0, (unsigned long)romarray, sizeof(romarray)},
-#endif
+// #ifdef CAT_ROMARRAY
+// 	{0, 0, -1},
+// #define FIXUP_ARENAS \
+//         arena[0].address = (unsigned long)__data_rom_start + (unsigned long)_edata - (unsigned long)__data_start;
+// #endif
 
-#ifdef CAT_ROMARRAY
-	{0, 0, -1},
-#define FIXUP_ARENAS \
-        arena[0].address = (unsigned long)__data_rom_start + (unsigned long)_edata - (unsigned long)__data_start;
-#endif
+// #ifdef CONFIG_ARCH_GBA
+// 	{0, 0, -1},
+// #define FIXUP_ARENAS \
+// 	arena[0].address = ((unsigned long) &_etext) + \
+// 		((unsigned long) &_edata) - ((unsigned long) &_sdata);
+// #endif
 
-#ifdef CONFIG_ARCH_GBA
-	{0, 0, -1},
-#define FIXUP_ARENAS \
-	arena[0].address = ((unsigned long) &_etext) + \
-		((unsigned long) &_edata) - ((unsigned long) &_sdata);
-#endif
+// #ifdef FIXED_ROMARRAY
+// #ifndef CONFIG_ROOT_NFS
+// 	{0, FIXED_ROMARRAY, -1},
+// #endif
+// #endif
 
-#ifdef FIXED_ROMARRAY
-#ifndef CONFIG_ROOT_NFS
-	{0, FIXED_ROMARRAY, -1},
-#endif
-#endif
+// #ifdef CONFIG_COLDFIRE
+//     /*
+//      * The ROM file-system is RAM resident on the ColdFire eval boards.
+//      * This arena is defined for access to it.
+//      */
+//     {0, 0, -1},
 
-#ifdef CONFIG_COLDFIRE
-    /*
-     * The ROM file-system is RAM resident on the ColdFire eval boards.
-     * This arena is defined for access to it.
-     */
-    {0, 0, -1},
+// #ifndef CONFIG_ROMFS_FROM_ROM
+//   #define FIXUP_ARENAS 	arena[0].address = (unsigned long) &_ebss;
+// #else
+//   #define FIXUP_ARENAS	{ \
+// 		register char *sp = (char *) arena[4].address; \
+// 		register char *ep = sp + arena[4].length; \
+// 		if (strncmp((char *) &_ebss, "-rom1fs-", 8) == 0) { \
+// 			sp = (char *) &_ebss; \
+// 		} else { \
+// 			while (sp < ep && strncmp(sp, "-rom1fs-", 8)) \
+// 				sp++; \
+// 			if (sp >= ep) \
+// 				sp = &_ebss; \
+// 		} \
+// 		arena[0].address = (unsigned long) sp; \
+// 	}
+// #endif /* CONFIG_ROMFS_FROM_ROM */
 
-#ifndef CONFIG_ROMFS_FROM_ROM
-  #define FIXUP_ARENAS 	arena[0].address = (unsigned long) &_ebss;
-#else
-  #define FIXUP_ARENAS	{ \
-		register char *sp = (char *) arena[4].address; \
-		register char *ep = sp + arena[4].length; \
-		if (strncmp((char *) &_ebss, "-rom1fs-", 8) == 0) { \
-			sp = (char *) &_ebss; \
-		} else { \
-			while (sp < ep && strncmp(sp, "-rom1fs-", 8)) \
-				sp++; \
-			if (sp >= ep) \
-				sp = &_ebss; \
-		} \
-		arena[0].address = (unsigned long) sp; \
-	}
-#endif /* CONFIG_ROMFS_FROM_ROM */
+// #ifdef CONFIG_ARN5206
+//     /*
+//      *  The spare FLASH segment on the Arnewsh 5206 board.
+//      */
+//     {1,0xffe20000,0x20000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x8000,0x20000,0xff},
+// #endif
 
-#ifdef CONFIG_ARN5206
-    /*
-     *  The spare FLASH segment on the Arnewsh 5206 board.
-     */
-    {1,0xffe20000,0x20000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x8000,0x20000,0xff},
-#endif
+// #if defined(CONFIG_ARN5307) || defined(CONFIG_M5206eC3)
+//     /*  pair of AM29LV004T flash for 1Mbyte total
+//      *  rom0 -- root file-system (actually in RAM)
+//      *  rom1 -- FLASH SA0   128K boot
+//      *  rom2 -- FLASH SA1-6 768k kernel & romfs
+//      *  rom3 -- FLASH SA7   64k spare
+//      *  rom4 -- FLASH SA8   16k spare
+//      *  rom5 -- FLASH SA9   16k spare
+//      *  rom6 -- FLASH SA10  32k spare
+//      */ 
+//     {1,0xffe00000,0x20000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x20000,0x20000,0xff},
+//     {1,0xffe20000,0xc0000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x20000,0xc0000,0xff},
+//     {1,0xffee0000,0x10000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x10000,0x10000,0xff},
+//     {1,0xffef0000,0x4000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x4000,0x4000,0xff},
+//     {1,0xffef4000,0x4000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x4000,0x4000,0xff},
+//     {1,0xffef8000,0x8000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x8000,0x8000,0xff},
+// #endif /* CONFIG_M5206eC3 */
 
-#if defined(CONFIG_ARN5307) || defined(CONFIG_M5206eC3)
-    /*  pair of AM29LV004T flash for 1Mbyte total
-     *  rom0 -- root file-system (actually in RAM)
-     *  rom1 -- FLASH SA0   128K boot
-     *  rom2 -- FLASH SA1-6 768k kernel & romfs
-     *  rom3 -- FLASH SA7   64k spare
-     *  rom4 -- FLASH SA8   16k spare
-     *  rom5 -- FLASH SA9   16k spare
-     *  rom6 -- FLASH SA10  32k spare
-     */ 
-    {1,0xffe00000,0x20000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x20000,0x20000,0xff},
-    {1,0xffe20000,0xc0000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x20000,0xc0000,0xff},
-    {1,0xffee0000,0x10000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x10000,0x10000,0xff},
-    {1,0xffef0000,0x4000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x4000,0x4000,0xff},
-    {1,0xffef4000,0x4000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x4000,0x4000,0xff},
-    {1,0xffef8000,0x8000,0,0,flash_amd8_pair_write,flash_amd8_pair_erase,0x8000,0x8000,0xff},
-#endif /* CONFIG_M5206eC3 */
+// #if defined(CONFIG_FLASH_SNAPGEAR)
+// #if defined(CONFIG_FLASH128K)
+//     /*
+//      *	SnapGear hardware with 128K FLASH.
+//      *	The following devices are supported:
+//      *		rom0 -- root file-system (actually in RAM)
+//      *		rom1 -- FLASH boot block (16k)
+//      *		rom2 -- FLASH boot arguments (16k)
+//      *		rom3 -- FLASH MAC addresses (16k)
+//      *		rom4 -- FLASH config file-system (64k)
+//      *		rom6 -- FLASH spare block (16k)
+//      *		rom5 -- FLASH the whole damn thing (128k)!
+//      */
+//     {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
+//     {1,0xf0004000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
+//     {1,0xf0008000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
+//     {1,0xf000c000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
+//     {1,0xf0010000,0x010000,flash_writeall,0,flash_write,flash_erase,0x04000,0x010000,0xff},
+//     {1,0xf0000000,0x020000,flash_writeall, 0, 0, 0,    0x04000,0x020000,0xff},
+// #elif defined(CONFIG_FLASH8MB)
+//     /*
+//      *	SnapGear hardware with 8MB FLASH.
+//      *	The following devices are supported:
+//      *		rom0 -- root file-system (actually in RAM)
+//      *		rom1 -- FLASH boot block (128k)
+//      *		rom2 -- FLASH boot arguments (128k)
+//      *		rom3 -- FLASH MAC addresses (128k)
+//      *		rom4 -- FLASH kernel+file-system binary (7mb)
+//      *		rom5 -- FLASH config file-system (512k)
+//      *		rom6 -- FLASH the whole damn thing (8Mb)!
+//      *		rom7 -- FLASH spare block (128k)
+//      */
+//     {1,0xf0000000,0x020000,flash_writeall, 0, 0, 0,    0x20000,0x020000,0xff},
+//     {1,0xf0020000,0x020000,0,0,flash_write,flash_erase,0x20000,0x020000,0xff},
+//     {1,0xf0040000,0x020000,0,0,flash_write,flash_erase,0x20000,0x020000,0xff},
+//     {1,0xf0100000,0x700000,flash_writeall, 0, 0, 0,    0x20000,0x700000,0xff},
+//     {1,0xf0080000,0x080000,0,0,flash_write,flash_erase,0x20000,0x080000,0xff},
+//     {1,0xf0000000,0x800000,flash_writeall, 0, 0, 0,    0x20000,0x800000,0xff},
+//     {1,0xf0060000,0x020000,flash_writeall,0,flash_write,flash_erase,0x20000,0x02000,0xff},
+// #elif defined(CONFIG_FLASH2MB) || defined(CONFIG_FLASH4MB)
+//     /*
+//      *	SnapGear hardware with 2MB/4MB FLASH.
+//      *	The following devices are supported:
+//      *		rom0 -- root file-system (actually in RAM)
+//      *		rom1 -- FLASH boot block (16k)
+//      *		rom2 -- FLASH boot arguments (8k)
+//      *		rom3 -- FLASH MAC addresses (8k)
+//      *		rom4 -- FLASH kernel+file-system binary (1920k)
+//      *		rom5 -- FLASH config file-system (64k)
+//      *		rom6 -- FLASH the whole damn thing (2Mb)!
+//      *		rom7 -- FLASH spare block (32k)
+//      *		rom8 -- FLASH2 kernel+file-system binary (1920k) (4MB only)
+//      *		rom9 -- FLASH2 the whole damn thing (2Mb)!
+//      */
+//     {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
+//     {1,0xf0004000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
+//     {1,0xf0006000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
+//     {1,0xf0020000,0x1e0000,flash_writeall, 0, 0, 0,    0x10000,0x1e0000,0xff},
+//     {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
+//     {1,0xf0000000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
+//     {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
+// #if defined(CONFIG_FLASH4MB)
+//     {1,0xf0220000,0x1e0000,flash_writeall, 0, 0, 0,    0x10000,0x1e0000,0xff},
+//     {1,0xf0200000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
+// #endif
+// #else
+//     /*
+//      *	SnapGear hardware FLASH erase/program entry points (1MB FLASH).
+//      *	The following devices are supported:
+//      *		rom0 -- root file-system (actually in RAM)
+//      *		rom1 -- FLASH boot block (16k)
+//      *		rom2 -- FLASH boot arguments (8k)
+//      *		rom3 -- FLASH MAC addresses (8k)
+//      *		rom4 -- FLASH kernel+file-system binary (896k)
+//      *		rom5 -- FLASH config file-system (64k)
+//      *		rom6 -- FLASH the whole damn thing (1Mb)!
+//      *		rom7 -- FLASH spare block (32k)
+//      */
+//     {1,0xf0000000,0x04000,flash_writeall, 0, 0, 0,    0x04000,0x04000,0xff},
+//     {1,0xf0004000,0x02000,0,0,flash_write,flash_erase,0x02000,0x02000,0xff},
+//     {1,0xf0006000,0x02000,0,0,flash_write,flash_erase,0x02000,0x02000,0xff},
+//     {1,0xf0010000,0xe0000,flash_writeall, 0, 0, 0,    0x10000,0xe0000,0xff},
+//     {1,0xf00f0000,0x10000,0,0,flash_write,flash_erase,0x10000,0x10000,0xff},
+//     {1,0xf0000000,0x100000,flash_writeall, 0, 0, 0,  0x10000,0x100000,0xff},
+//     {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
+// #if defined(CONFIG_EXTRA_FLASH1MB)
+//     /*
+//      *		rom8 -- FLASH extra. where the NETtel3540 stores the dsl image
+//      */
+//     {1,0xf0100000,0x100000,flash_writeall, 0, 0, 0,  0x10000,0x100000,0xff},
+// #endif /* CONFIG_EXTRA_FLASH1MB */
+// #endif /* CONFIG_FLASH2MB */
+// #endif /* CONFIG_FLASH_SNAPGEAR */
 
-#if defined(CONFIG_FLASH_SNAPGEAR)
-#if defined(CONFIG_FLASH128K)
-    /*
-     *	SnapGear hardware with 128K FLASH.
-     *	The following devices are supported:
-     *		rom0 -- root file-system (actually in RAM)
-     *		rom1 -- FLASH boot block (16k)
-     *		rom2 -- FLASH boot arguments (16k)
-     *		rom3 -- FLASH MAC addresses (16k)
-     *		rom4 -- FLASH config file-system (64k)
-     *		rom6 -- FLASH spare block (16k)
-     *		rom5 -- FLASH the whole damn thing (128k)!
-     */
-    {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
-    {1,0xf0004000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
-    {1,0xf0008000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
-    {1,0xf000c000,0x004000,0,0,flash_write,flash_erase,0x04000,0x004000,0xff},
-    {1,0xf0010000,0x010000,flash_writeall,0,flash_write,flash_erase,0x04000,0x010000,0xff},
-    {1,0xf0000000,0x020000,flash_writeall, 0, 0, 0,    0x04000,0x020000,0xff},
-#elif defined(CONFIG_FLASH8MB)
-    /*
-     *	SnapGear hardware with 8MB FLASH.
-     *	The following devices are supported:
-     *		rom0 -- root file-system (actually in RAM)
-     *		rom1 -- FLASH boot block (128k)
-     *		rom2 -- FLASH boot arguments (128k)
-     *		rom3 -- FLASH MAC addresses (128k)
-     *		rom4 -- FLASH kernel+file-system binary (7mb)
-     *		rom5 -- FLASH config file-system (512k)
-     *		rom6 -- FLASH the whole damn thing (8Mb)!
-     *		rom7 -- FLASH spare block (128k)
-     */
-    {1,0xf0000000,0x020000,flash_writeall, 0, 0, 0,    0x20000,0x020000,0xff},
-    {1,0xf0020000,0x020000,0,0,flash_write,flash_erase,0x20000,0x020000,0xff},
-    {1,0xf0040000,0x020000,0,0,flash_write,flash_erase,0x20000,0x020000,0xff},
-    {1,0xf0100000,0x700000,flash_writeall, 0, 0, 0,    0x20000,0x700000,0xff},
-    {1,0xf0080000,0x080000,0,0,flash_write,flash_erase,0x20000,0x080000,0xff},
-    {1,0xf0000000,0x800000,flash_writeall, 0, 0, 0,    0x20000,0x800000,0xff},
-    {1,0xf0060000,0x020000,flash_writeall,0,flash_write,flash_erase,0x20000,0x02000,0xff},
-#elif defined(CONFIG_FLASH2MB) || defined(CONFIG_FLASH4MB)
-    /*
-     *	SnapGear hardware with 2MB/4MB FLASH.
-     *	The following devices are supported:
-     *		rom0 -- root file-system (actually in RAM)
-     *		rom1 -- FLASH boot block (16k)
-     *		rom2 -- FLASH boot arguments (8k)
-     *		rom3 -- FLASH MAC addresses (8k)
-     *		rom4 -- FLASH kernel+file-system binary (1920k)
-     *		rom5 -- FLASH config file-system (64k)
-     *		rom6 -- FLASH the whole damn thing (2Mb)!
-     *		rom7 -- FLASH spare block (32k)
-     *		rom8 -- FLASH2 kernel+file-system binary (1920k) (4MB only)
-     *		rom9 -- FLASH2 the whole damn thing (2Mb)!
-     */
-    {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
-    {1,0xf0004000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
-    {1,0xf0006000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
-    {1,0xf0020000,0x1e0000,flash_writeall, 0, 0, 0,    0x10000,0x1e0000,0xff},
-    {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
-    {1,0xf0000000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
-    {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
-#if defined(CONFIG_FLASH4MB)
-    {1,0xf0220000,0x1e0000,flash_writeall, 0, 0, 0,    0x10000,0x1e0000,0xff},
-    {1,0xf0200000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
-#endif
-#else
-    /*
-     *	SnapGear hardware FLASH erase/program entry points (1MB FLASH).
-     *	The following devices are supported:
-     *		rom0 -- root file-system (actually in RAM)
-     *		rom1 -- FLASH boot block (16k)
-     *		rom2 -- FLASH boot arguments (8k)
-     *		rom3 -- FLASH MAC addresses (8k)
-     *		rom4 -- FLASH kernel+file-system binary (896k)
-     *		rom5 -- FLASH config file-system (64k)
-     *		rom6 -- FLASH the whole damn thing (1Mb)!
-     *		rom7 -- FLASH spare block (32k)
-     */
-    {1,0xf0000000,0x04000,flash_writeall, 0, 0, 0,    0x04000,0x04000,0xff},
-    {1,0xf0004000,0x02000,0,0,flash_write,flash_erase,0x02000,0x02000,0xff},
-    {1,0xf0006000,0x02000,0,0,flash_write,flash_erase,0x02000,0x02000,0xff},
-    {1,0xf0010000,0xe0000,flash_writeall, 0, 0, 0,    0x10000,0xe0000,0xff},
-    {1,0xf00f0000,0x10000,0,0,flash_write,flash_erase,0x10000,0x10000,0xff},
-    {1,0xf0000000,0x100000,flash_writeall, 0, 0, 0,  0x10000,0x100000,0xff},
-    {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
-#if defined(CONFIG_EXTRA_FLASH1MB)
-    /*
-     *		rom8 -- FLASH extra. where the NETtel3540 stores the dsl image
-     */
-    {1,0xf0100000,0x100000,flash_writeall, 0, 0, 0,  0x10000,0x100000,0xff},
-#endif /* CONFIG_EXTRA_FLASH1MB */
-#endif /* CONFIG_FLASH2MB */
-#endif /* CONFIG_FLASH_SNAPGEAR */
+// #if defined(CONFIG_HW_FEITH)
 
-#if defined(CONFIG_HW_FEITH)
+// #if defined(CONFIG_CLEOPATRA) || defined(CONFIG_SCALES)
+// /*
+//  *	CLEOPATRA with 2MB/4MB FLASH erase/program entry points.
+//  *	The following devices are supported:
+//  *		rom0 -- root file-system (actually in RAM)
+//  *		rom1 -- FLASH boot block (16k)
+//  *		rom2 -- FLASH boot arguments (8k)
+//  *		rom3 -- FLASH MAC addresses (8k)
+//  *		rom4 -- FLASH kernel+file-system binary (1792k)
+//  *		rom5 -- FLASH config file-system (64k)
+//  *		rom6 -- FLASH the whole damn thing (2Mb)!
+//  *		rom7 -- FLASH spare block (32k)
+//  *		rom8 -- FLASH application config (128k)
+//  *		rom9 -- FLASH user block (1536k) (4MB only)
+//  *		rom10-- FLASH user block (512k) (4MB only)
+//  *		rom11-- FLASH user block (2048k) (6MB only)
+//  */
+//     {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
+//     {1,0xf0004000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
+//     {1,0xf0006000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
+//     {1,0xf0020000,0x1c0000,flash_writeall, 0, 0, 0,    0x10000,0x1c0000,0xff},
+//     {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
+//     {1,0xf0000000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
+//     {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
+//     {1,0xf01e0000,0x020000,0,0,flash_write,flash_erase,0x10000,0x020000,0xff},
+// #if defined(CONFIG_FLASH4MB)
+//     {1,0xf0200000,0x180000,0,0,flash_write,flash_erase,0x10000,0x180000,0xff},
+//     {1,0xf0380000,0x080000,0,0,flash_write,flash_erase,0x10000,0x080000,0xff},
+// #endif
 
-#if defined(CONFIG_CLEOPATRA) || defined(CONFIG_SCALES)
-/*
- *	CLEOPATRA with 2MB/4MB FLASH erase/program entry points.
- *	The following devices are supported:
- *		rom0 -- root file-system (actually in RAM)
- *		rom1 -- FLASH boot block (16k)
- *		rom2 -- FLASH boot arguments (8k)
- *		rom3 -- FLASH MAC addresses (8k)
- *		rom4 -- FLASH kernel+file-system binary (1792k)
- *		rom5 -- FLASH config file-system (64k)
- *		rom6 -- FLASH the whole damn thing (2Mb)!
- *		rom7 -- FLASH spare block (32k)
- *		rom8 -- FLASH application config (128k)
- *		rom9 -- FLASH user block (1536k) (4MB only)
- *		rom10-- FLASH user block (512k) (4MB only)
- *		rom11-- FLASH user block (2048k) (6MB only)
- */
-    {1,0xf0000000,0x004000,flash_writeall, 0, 0, 0,    0x04000,0x004000,0xff},
-    {1,0xf0004000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
-    {1,0xf0006000,0x002000,0,0,flash_write,flash_erase,0x02000,0x002000,0xff},
-    {1,0xf0020000,0x1c0000,flash_writeall, 0, 0, 0,    0x10000,0x1c0000,0xff},
-    {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
-    {1,0xf0000000,0x200000,flash_writeall, 0, 0, 0,    0x10000,0x200000,0xff},
-    {1,0xf0008000,0x08000,flash_writeall,0,flash_write,flash_erase,0x08000,0x08000,0xff},
-    {1,0xf01e0000,0x020000,0,0,flash_write,flash_erase,0x10000,0x020000,0xff},
-#if defined(CONFIG_FLASH4MB)
-    {1,0xf0200000,0x180000,0,0,flash_write,flash_erase,0x10000,0x180000,0xff},
-    {1,0xf0380000,0x080000,0,0,flash_write,flash_erase,0x10000,0x080000,0xff},
-#endif
+// #if defined(CONFIG_FLASH6MB)
+//     {1,0xf0200000,0x180000,0,0,flash_write,flash_erase,0x10000,0x180000,0xff},
+//     {1,0xf0380000,0x080000,0,0,flash_write,flash_erase,0x10000,0x080000,0xff},
+// 	 // old settings
+//     {1,0xf0400000,0x200000,0,0,flash_write,flash_erase,0x10000,0x200000,0xff},
+// 	// new settings
+// //    {1,0xf0410000,0x040000,flash_writeall,0, flash_write,flash_erase,0x10000,0x040000,0xff},
+// //    {1,0xf0450000,0x1b0000,0,0,flash_write,flash_erase,0x10000,0x1b0000,0xff},
 
-#if defined(CONFIG_FLASH6MB)
-    {1,0xf0200000,0x180000,0,0,flash_write,flash_erase,0x10000,0x180000,0xff},
-    {1,0xf0380000,0x080000,0,0,flash_write,flash_erase,0x10000,0x080000,0xff},
-	 // old settings
-    {1,0xf0400000,0x200000,0,0,flash_write,flash_erase,0x10000,0x200000,0xff},
-	// new settings
-//    {1,0xf0410000,0x040000,flash_writeall,0, flash_write,flash_erase,0x10000,0x040000,0xff},
-//    {1,0xf0450000,0x1b0000,0,0,flash_write,flash_erase,0x10000,0x1b0000,0xff},
+// #endif
+// #endif /* CONFIG_CLEOPATRA || CONFIG_SCALES */
 
-#endif
-#endif /* CONFIG_CLEOPATRA || CONFIG_SCALES */
+// #if defined(CONFIG_CANCam)
+// /*
+//  *	CanCam with 8MB FLASH erase/program entry points.
+//  *	The following devices are supported:
+//  *		rom0 -- root file-system (actually in RAM)
+//  *		rom1 -- FLASH boot block (64k)
+//  *		rom2 -- FLASH boot arguments (64k)
+//  *		rom3 -- FLASH MAC addresses (64k)
+//  *		rom4 -- FLASH kernel+file-system binary (1728k)
+//  *		rom5 -- FLASH config file-system (64k)
+//  *		rom6 -- FLASH the whole damn thing (8Mb)!
+//  *		rom7 -- FLASH spare block (64k)
+//  *		rom8 -- FLASH user block (6MB)
+//  */
+//     {1,0xf0000000,0x010000,flash_writeall, 0, 0, 0,    0x10000,0x010000,0xff},
+//     {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
+//     {1,0xf0020000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
+//     {1,0xf0050000,0x1b0000,flash_writeall, 0, 0, 0,    0x10000,0x1b0000,0xff},
+//     {1,0xf0040000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
+//     {1,0xf0000000,0x800000,flash_writeall, 0, 0, 0,    0x10000,0x800000,0xff},
+//     {1,0xf0030000,0x010000,flash_writeall,0,flash_write,flash_erase,0x10000,0x10000,0xff},
+//     {1,0xf0200000,0x600000,0,0,flash_write,flash_erase,0x10000,0x600000,0xff},
+// #endif /* CONFIG_CanCam */
+// #endif /* CONFIG_HW_FEITH */
 
-#if defined(CONFIG_CANCam)
-/*
- *	CanCam with 8MB FLASH erase/program entry points.
- *	The following devices are supported:
- *		rom0 -- root file-system (actually in RAM)
- *		rom1 -- FLASH boot block (64k)
- *		rom2 -- FLASH boot arguments (64k)
- *		rom3 -- FLASH MAC addresses (64k)
- *		rom4 -- FLASH kernel+file-system binary (1728k)
- *		rom5 -- FLASH config file-system (64k)
- *		rom6 -- FLASH the whole damn thing (8Mb)!
- *		rom7 -- FLASH spare block (64k)
- *		rom8 -- FLASH user block (6MB)
- */
-    {1,0xf0000000,0x010000,flash_writeall, 0, 0, 0,    0x10000,0x010000,0xff},
-    {1,0xf0010000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
-    {1,0xf0020000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
-    {1,0xf0050000,0x1b0000,flash_writeall, 0, 0, 0,    0x10000,0x1b0000,0xff},
-    {1,0xf0040000,0x010000,0,0,flash_write,flash_erase,0x10000,0x010000,0xff},
-    {1,0xf0000000,0x800000,flash_writeall, 0, 0, 0,    0x10000,0x800000,0xff},
-    {1,0xf0030000,0x010000,flash_writeall,0,flash_write,flash_erase,0x10000,0x10000,0xff},
-    {1,0xf0200000,0x600000,0,0,flash_write,flash_erase,0x10000,0x600000,0xff},
-#endif /* CONFIG_CanCam */
-#endif /* CONFIG_HW_FEITH */
-
-#endif /* CONFIG_COLDFIRE */
-
-
-
-#if defined(CONFIG_MWI) && defined(CONFIG_FLASH1MB)
-    /*
-     *	MWI hardware FLASH erase/program entry points (1MB FLASH).
-     *	The following devices are supported:
-     *		rom0 -- root file-system (actually in RAM)
-     *		rom1 -- FLASH boot block (16k)
-     *		rom2 -- FLASH boot arguments (8k)
-     *		rom3 -- FLASH MAC addresses (8k)
-     *		rom4 -- FLASH kernel+file-system binary (896k)
-     *		rom5 -- FLASH config file-system (64k)
-     *		rom6 -- FLASH the whole damn thing (1Mb)!
-     *		rom7 -- FLASH spare block (32k)
-     */
-    {1,0x000000, 0x100000, flash_writeall, 0, 0, 0,  0x10000, 0x100000, 0xff},
-#if 0
-    {1,0x000000, 0x004000, flash_writeall, 0, 0, 0,    0x04000, 0x04000, 0xff},
-    {1,0x004000, 0x002000, 0, 0, flash_write, flash_erase, 0x02000, 0x02000, 0xff},
-    {1,0x006000, 0x002000, 0, 0, flash_write, flash_erase, 0x02000, 0x02000, 0xff},
-    {1,0x010000, 0x0e0000, flash_writeall, 0, 0, 0,    0x10000, 0xe0000, 0xff},
-    {1,0x0f0000, 0x010000, 0, 0, flash_write, flash_erase, 0x10000, 0x10000, 0xff},
-    {1,0x000000, 0x100000, flash_writeall, 0, 0, 0,  0x10000, 0x100000, 0xff},
-    {1,0x008000, 0x008000, flash_writeall, 0, flash_write, flash_erase, 0x08000, 0x08000, 0xff},
-#endif
-#endif
-
-#ifdef __H8300H__
-	{0,_rootimage,-1},
-#endif
+// #endif /* CONFIG_COLDFIRE */
 
 
-#ifdef CONFIG_SHGLCORE
 
-#ifdef CONFIG_SHGLCORE_2MEG
-	{0, 0x0A0000, 0x200000-0x0A0000},	/* ROM FS */
-	{1, SHGLCORE_FLASH_BANK_0_ADDR, 0x80000, 0, 0, write_spare, erase_spare, 0x10000, 0x80000, 0xff},
-	{1, 0x000000, 0x200000, program_main, 0,0,0, 0x20000, 0x100000}, /* All main FLASH */
-#else
-	{0, 0x0A0000, 0x100000-0x0A0000},	/* ROM FS */
-	{1, SHGLCORE_FLASH_BANK_0_ADDR, 0x80000, 0, 0, write_spare, erase_spare, 0x10000, 0x80000, 0xff},
-	{1, 0x000000, 0x100000, program_main, 0,0,0, 0x20000, 0x100000}, /* All main FLASH */
-#endif
+// #if defined(CONFIG_MWI) && defined(CONFIG_FLASH1MB)
+//     /*
+//      *	MWI hardware FLASH erase/program entry points (1MB FLASH).
+//      *	The following devices are supported:
+//      *		rom0 -- root file-system (actually in RAM)
+//      *		rom1 -- FLASH boot block (16k)
+//      *		rom2 -- FLASH boot arguments (8k)
+//      *		rom3 -- FLASH MAC addresses (8k)
+//      *		rom4 -- FLASH kernel+file-system binary (896k)
+//      *		rom5 -- FLASH config file-system (64k)
+//      *		rom6 -- FLASH the whole damn thing (1Mb)!
+//      *		rom7 -- FLASH spare block (32k)
+//      */
+//     {1,0x000000, 0x100000, flash_writeall, 0, 0, 0,  0x10000, 0x100000, 0xff},
+// #if 0
+//     {1,0x000000, 0x004000, flash_writeall, 0, 0, 0,    0x04000, 0x04000, 0xff},
+//     {1,0x004000, 0x002000, 0, 0, flash_write, flash_erase, 0x02000, 0x02000, 0xff},
+//     {1,0x006000, 0x002000, 0, 0, flash_write, flash_erase, 0x02000, 0x02000, 0xff},
+//     {1,0x010000, 0x0e0000, flash_writeall, 0, 0, 0,    0x10000, 0xe0000, 0xff},
+//     {1,0x0f0000, 0x010000, 0, 0, flash_write, flash_erase, 0x10000, 0x10000, 0xff},
+//     {1,0x000000, 0x100000, flash_writeall, 0, 0, 0,  0x10000, 0x100000, 0xff},
+//     {1,0x008000, 0x008000, flash_writeall, 0, flash_write, flash_erase, 0x08000, 0x08000, 0xff},
+// #endif
+// #endif
 
-#define FIXUP_ARENAS \
-	extern unsigned long rom_length; \
-	arena[0].length = (unsigned long)rom_length - 0xA0000; \
-	arena[2].length = (unsigned long)rom_length;
+// #ifdef __H8300H__
+// 	{0,_rootimage,-1},
+// #endif
 
-#endif
+
+// #ifdef CONFIG_SHGLCORE
+
+// #ifdef CONFIG_SHGLCORE_2MEG
+// 	{0, 0x0A0000, 0x200000-0x0A0000},	/* ROM FS */
+// 	{1, SHGLCORE_FLASH_BANK_0_ADDR, 0x80000, 0, 0, write_spare, erase_spare, 0x10000, 0x80000, 0xff},
+// 	{1, 0x000000, 0x200000, program_main, 0,0,0, 0x20000, 0x100000}, /* All main FLASH */
+// #else
+// 	{0, 0x0A0000, 0x100000-0x0A0000},	/* ROM FS */
+// 	{1, SHGLCORE_FLASH_BANK_0_ADDR, 0x80000, 0, 0, write_spare, erase_spare, 0x10000, 0x80000, 0xff},
+// 	{1, 0x000000, 0x100000, program_main, 0,0,0, 0x20000, 0x100000}, /* All main FLASH */
+// #endif
+
+// #define FIXUP_ARENAS \
+// 	extern unsigned long rom_length; \
+// 	arena[0].length = (unsigned long)rom_length - 0xA0000; \
+// 	arena[2].length = (unsigned long)rom_length;
+
+// #endif
 };
 
 #define arenas (sizeof(arena) / sizeof(struct arena_t))
@@ -2722,16 +2729,17 @@ blkmem_init( void )
   }
 
   printk("Blkmem copyright 1998,1999 D. Jeff Dionne\n"
-	 "Blkmem copyright 1998 Kenneth Albanowski\n"
-	 "Blkmem %d disk images:\n", (int) arenas);
+         "Blkmem copyright 1998 Kenneth Albanowski\n"
+         "Blkmem %d disk images:\n",
+         (int)arenas);
 
-  for(i=0;i<arenas;i++) {
+  for (i = 0; i < arenas; i++)
+  {
     printk("%d: %lX-%lX (%s)\n", i,
-	arena[i].address, arena[i].address+arena[i].length-1,
-    	arena[i].rw 
-    		? "RW"
-    		: "RO"
-    );
+           arena[i].address, arena[i].address + arena[i].length - 1,
+           arena[i].rw
+               ? "RW"
+               : "RO");
   }
 
   read_ahead[ MAJOR_NR ] = 0;

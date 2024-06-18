@@ -224,7 +224,7 @@ void setup_console(void)
 #endif
 }
 
-#if defined( CONFIG_TELOS) || defined( CONFIG_UCSIMM ) || (defined( CONFIG_PILOT ) && defined( CONFIG_M68328 ))
+#if defined( CONFIG_TELOS) || defined( CONFIG_UCSIMM ) || (defined( CONFIG_PILOT ) && defined( CONFIG_M68328 )) || defined( CONFIG_MACKEREL )
 #define CAT_ROMARRAY
 #endif
 

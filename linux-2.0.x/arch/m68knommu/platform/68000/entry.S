@@ -693,7 +693,7 @@ SYMBOL_NAME_LABEL(inthandler1)
 
 	movel	%sp,%sp@-
         /* autovector interrupt 0x19 */
-	movel	#25,%sp@- 		/*  put vector # on stack (was %d0) */
+	movel	#65,%sp@- 		/*  put vector # on stack (was %d0) */
 	jbsr	SYMBOL_NAME(process_int)/*  process the IRQ */
 	addql	#8,%sp			/*  pop parameters off stack */
 	bra	ret_from_interrupt	/* this was fallthrough */
