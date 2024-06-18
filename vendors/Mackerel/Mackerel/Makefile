@@ -62,7 +62,8 @@ image:
 	genromfs -v -V "ROMdisk" -f $(ROMFSIMG) -d $(ROMFSDIR)
 	$(CROSS_COMPILE)objcopy -O binary -j .text $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.text
 	$(CROSS_COMPILE)objcopy -O binary -j .data $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.data
-	cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data $(ROMFSIMG) > $(IMAGE)
+	# cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data $(ROMFSIMG) > $(IMAGE)
+	cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data > $(IMAGE)
 	@perl -e '$$s=sprintf "%d", (((-s "$(IMAGE)")+1023) / 1024); \
 	   die "image too large ($${s}k)\n" if ($$s > 1024); \
 	   printf "image size: %dk\n", $$s;'

@@ -24,6 +24,8 @@
 #include <linux/tty.h>
 #include <linux/tty_driver.h>
 
+#include <asm/mackerel.h>
+
 #if defined(CONFIG_REDUCED_MEMORY) && !defined(CONFIG_DUMPTOFLASH)
 #define LOG_BUF_LEN	1024 /* Originally: 8192 */
 #else /* !CONFIG_REDUCED_MEMORY */
@@ -195,10 +197,20 @@ asmlinkage int printk(const char *fmt, ...)
 			if (*p == '\n')
 				break;
 		}
-		if (msg_level < console_loglevel && console_print_proc) {
+		if (msg_level < 8 /* && console_print_proc */) {
 			char tmp = p[1];
+			int i = 0;
 			p[1] = '\0';
-			(*console_print_proc)(msg);
+
+			// TODO: hack to avoid writing a serial driver
+
+			// (*console_print_proc)(msg);
+			
+			while (msg[i] != 0) {
+				duart_putc(msg[i]);
+				i++;
+			}
+
 			p[1] = tmp;
 		}
 		if (*p == '\n')

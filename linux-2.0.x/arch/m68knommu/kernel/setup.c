@@ -232,10 +232,10 @@ void setup_arch(char **cmdline_p,
 		unsigned long * memory_start_p, unsigned long * memory_end_p)
 {
 	extern int _stext, _etext;
-#ifdef DEBUG
+// #ifdef DEBUG
 	extern int _sdata;
 	extern int _sbss, _ebss;
-#endif
+// #endif
 	extern int _edata, _end;
 	extern int _ramstart, _ramend;
 
@@ -323,7 +323,7 @@ void setup_arch(char **cmdline_p,
 #endif
 
 
-#ifdef DEBUG
+// #ifdef DEBUG
 	printk("KERNEL -> TEXT=0x%06x-0x%06x DATA=0x%06x-0x%06x "
 		"BSS=0x%06x-0x%06x\n", (int) &_stext, (int) &_etext,
 		(int) &_sdata, (int) &_edata,
@@ -340,7 +340,7 @@ void setup_arch(char **cmdline_p,
 			((unsigned) &_ramend > (unsigned) &_sdata &&
 				(unsigned) &_ramend < (unsigned) &_end) ?
 				(unsigned) _ramend : (unsigned) &_ramend);
-#endif
+// #endif
 
 	init_task.mm->start_code = (unsigned long) &_stext;
 	init_task.mm->end_code = (unsigned long) &_etext;
@@ -377,9 +377,9 @@ void setup_arch(char **cmdline_p,
 #endif
 #endif
 
-#ifdef DEBUG
+// #ifdef DEBUG
 	printk("Done setup_arch\n");
-#endif
+// #endif
 
 }
 
