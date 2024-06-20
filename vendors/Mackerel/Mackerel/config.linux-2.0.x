@@ -111,6 +111,7 @@ CONFIG_EXT2_FS=y
 # CONFIG_XIA_FS is not set
 # CONFIG_NLS is not set
 CONFIG_PROC_FS=y
+# CONFIG_NCP_FS is not set
 # CONFIG_HPFS_FS is not set
 # CONFIG_SYSV_FS is not set
 # CONFIG_AUTOFS_FS is not set
