@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PORT=/dev/ttyACM0
+PORT=/dev/ttyUSB0
 
 ls -lah images
 

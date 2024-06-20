@@ -8,6 +8,7 @@
 #define DUART_SRA (DUART_BASE + 0x03)
 #define DUART_CSRA (DUART_BASE + 0x03)
 #define DUART_CRA (DUART_BASE + 0x05)
+#define DUART_MISR (DUART_BASE + 0x05)
 #define DUART_RBA (DUART_BASE + 0x07)
 #define DUART_TBA (DUART_BASE + 0x07)
 #define DUART_ACR (DUART_BASE + 0x09)
@@ -15,7 +16,6 @@
 #define DUART_IMR (DUART_BASE + 0x0B)
 #define DUART_CUR (DUART_BASE + 0x0D)
 #define DUART_CLR (DUART_BASE + 0x0F)
-
 #define DUART_MR1B (DUART_BASE + 0x11)
 #define DUART_MR2B (DUART_BASE + 0x11)
 #define DUART_SRB (DUART_BASE + 0x13)
@@ -23,11 +23,41 @@
 #define DUART_CRB (DUART_BASE + 0x15)
 #define DUART_RBB (DUART_BASE + 0x17)
 #define DUART_TBB (DUART_BASE + 0x17)
-
 #define DUART_IVR (DUART_BASE + 0x19)
 #define DUART_OPCR (DUART_BASE + 0x1B)
 #define DUART_OPR (DUART_BASE + 0x1D)
 #define DUART_OPR_RESET (DUART_BASE + 0x1F)
+
+// MC68681P DUART
+#define DUART1_BASE 0x3E1000
+#define DUART1_MR1A (DUART1_BASE + 0x01)
+#define DUART1_MR2A (DUART1_BASE + 0x01)
+#define DUART1_SRA (DUART1_BASE + 0x03)
+#define DUART1_CSRA (DUART1_BASE + 0x03)
+#define DUART1_CRA (DUART1_BASE + 0x05)
+#define DUART1_MISR (DUART1_BASE + 0x05)
+#define DUART1_RBA (DUART1_BASE + 0x07)
+#define DUART1_TBA (DUART1_BASE + 0x07)
+#define DUART1_ACR (DUART1_BASE + 0x09)
+#define DUART1_ISR (DUART1_BASE + 0x0B)
+#define DUART1_IMR (DUART1_BASE + 0x0B)
+#define DUART1_CUR (DUART1_BASE + 0x0D)
+#define DUART1_CLR (DUART1_BASE + 0x0F)
+#define DUART1_MR1B (DUART1_BASE + 0x11)
+#define DUART1_MR2B (DUART1_BASE + 0x11)
+#define DUART1_SRB (DUART1_BASE + 0x13)
+#define DUART1_CSRB (DUART1_BASE + 0x13)
+#define DUART1_CRB (DUART1_BASE + 0x15)
+#define DUART1_RBB (DUART1_BASE + 0x17)
+#define DUART1_TBB (DUART1_BASE + 0x17)
+#define DUART1_IVR (DUART1_BASE + 0x19)
+#define DUART1_OPCR (DUART1_BASE + 0x1B)
+#define DUART1_OPR (DUART1_BASE + 0x1D)
+#define DUART1_OPR_RESET (DUART1_BASE + 0x1F)
+
+// DUART interrupt flags
+#define DUART_INTR_COUNTER 0x08
+#define DUART_INTR_RXRDY  0x20
 
 // Get the value at a memory address
 #define MEM(address) (*(volatile unsigned char *)(address))
