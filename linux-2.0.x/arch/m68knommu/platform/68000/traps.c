@@ -42,6 +42,7 @@
 #include <asm/traps.h>
 #include <asm/page.h>
 #include <asm/machdep.h>
+#include <asm/mackerel.h>
 
 /* table for system interrupt handlers */
 static irq_handler_t irq_list[SYS_IRQS];
@@ -186,20 +187,40 @@ void disable_irq(unsigned int irq)
 
 asmlinkage void process_int(unsigned long vec, struct pt_regs *fp)
 {
+	int new_vec = vec;
+
 	/* give the machine specific code a crack at it first */
 	if (mach_process_int)
 		if (!mach_process_int(vec, fp))
 			return;
 
-	if (vec < VEC_SPUR || vec > VEC_INT7)
-		panic("No interrupt handler for vector %ld\n", vec);
+	if (new_vec < VEC_SPUR || new_vec > VEC_INT7)
+		panic("No interrupt handler for vector %ld\n", new_vec);
 
-	vec -= VEC_SPUR;
-	kstat.interrupts[vec]++;
-	if (irq_list[vec].handler)
-		irq_list[vec].handler(vec, irq_list[vec].dev_id, fp);
+	// If this is a DUART interrupt, find the correct vector to pass along
+	if (new_vec == VEC_INT1) {
+		// read the DUART MISR register to determine the source of the interrupt - serial or timer
+		unsigned char misr = MEM(DUART_MISR);
+
+		if (misr & DUART_INTR_RXRDY) {
+			new_vec = VEC_INT1;
+		}
+		else if (misr & DUART_INTR_COUNTER) {
+			
+			new_vec = VEC_INT2;
+		}
+		else {
+			// Don't recognize this interrupt!
+			new_vec = VEC_SPUR;
+		}
+	}
+
+	new_vec -= VEC_SPUR;
+	kstat.interrupts[new_vec]++;
+	if (irq_list[new_vec].handler)
+		irq_list[new_vec].handler(new_vec, irq_list[new_vec].dev_id, fp);
 	else {
-                panic("No interrupt handler for autovector %ld\n", vec); 
+                panic("No interrupt handler for autovector %ld\n", new_vec); 
         }
 }
 

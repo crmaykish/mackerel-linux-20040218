@@ -18,9 +18,8 @@
 #include <asm/segment.h>
 #include <asm/bitops.h>
 #include <asm/delay.h>
-
 #include <asm/mackerel.h>
-#include <asm/traps.h> /* VEC_SPUR */
+#include <asm/traps.h>
 
 #include "68681serial.h"
 
@@ -43,33 +42,11 @@ static struct tty_struct *mackerel_tty_table[NUM_PORTS];
 static struct termios *mackerel_termios[NUM_PORTS];
 static struct termios *mackerel_termios_locked[NUM_PORTS];
 
-// static void mackerel_put_char(mackerel_info *info, char ch)
-// {
-// 	int flags, loops = 0;
-
-// 	save_flags(flags); cli();
-// 	// while((FT245_READ_STATUS_TXE(info->portaddrs) & FT245_STATUS_BIT)!=0
-//     //            && loops < 10000) {
-// 	// 	loops++;
-// 	// 	udelay(5);
-// 	// }
-
-// 	// FT245_WRITE_DATA(info->portaddrs, ch);
-// 	restore_flags(flags);
-// }
-
 static int mackerel_write(struct tty_struct *tty, int from_user,
 						  const unsigned char *buf, int count)
 {
-	/* TODO: manage chars in a memory buffer instead of sending immediately, honor tty stopped status */
 	char c;
 	int flags;
-	// ft245_info *info;
-
-	// info = (ft245_info *)tty->driver_data;
-
-	// if (!tty || !info || info->magic != SERIAL_MAGIC)
-	// 	return 0;
 
 	save_flags(flags);
 	cli();
@@ -83,14 +60,10 @@ static int mackerel_write(struct tty_struct *tty, int from_user,
 	return count;
 }
 
-/*
- * ft245_console_print is registered for printk.
- */
 static void mackerel_console_print(const char *p)
 {
 	char c;
 
-	/* TODO: need cli() here? */
 	while ((c = *(p++)) != 0)
 	{
 		if (c == '\n')
@@ -110,20 +83,10 @@ void mackerel_interrupt(int irq, void *dev_id, struct pt_regs *regs)
 	mackerel_info *info = (mackerel_info *)dev_id;
 	struct tty_struct *tty = info->tty;
 
-	// if (!info || info->magic != SERIAL_MAGIC)
-	// {
-	// 	printk("ft245_interrupt: unexpected interrupt\n");
-	// 	return;
-	// }
-
-	/* receive characters here, set up an event for kernel to handle them later outside the interrupt handler */
-	// ch = FT245_READ_DATA(info->portaddrs);
-
 	// Determine the type of interrupt
 	unsigned char misr = MEM(DUART_MISR);
 
-	// duart_putc('i');
-
+	// TODO: do we need this check here now that it's being handled upstream?
 	if (misr & DUART_INTR_RXRDY)
 	{
 		// RX character available
@@ -132,13 +95,11 @@ void mackerel_interrupt(int irq, void *dev_id, struct pt_regs *regs)
 		if (tty)
 		{
 			if (tty->flip.count >= TTY_FLIPBUF_SIZE) {
-				// duart_putc('q');
 				queue_task_irq_off(&tty->flip.tqueue, &tq_timer);
 			}
 			tty->flip.count++;
 			*tty->flip.flag_buf_ptr++ = 0; /* no error */
 			*tty->flip.char_buf_ptr++ = ch;
-			// duart_putc('w');
 			queue_task_irq_off(&tty->flip.tqueue, &tq_timer);
 		}
 
@@ -176,18 +137,11 @@ int mackerel_write_room(struct tty_struct *tty)
 
 static void mackerel_init_port(mackerel_info *info, int port_num)
 {
-	// if (port_num < 0 || port_num >= sizeof(ft245_port_info)/sizeof(ft245_port_info[0]) )
-	// {
-	//         return ;
-	// }
-
-	// info->magic = SERIAL_MAGIC;
 	info->line = port_num;
 	info->irq = VEC_INT1 - VEC_SPUR;
-	// info->portaddrs = mackerel_port_info[port_num];
 }
 
-/* ft245_init inits the driver, called from tty_init in tty_io.c during system init */
+/* mackerel_init inits the driver, called from tty_init in tty_io.c during system init */
 int mackerel_init(void)
 {
 	int flags;
@@ -206,7 +160,7 @@ int mackerel_init(void)
 #if 0
         /* additional initializations for devfs (not supportet in uclinux 2.0.x) */
         serial_driver.devfs_name = "ttys/";
-        serial_driver.driver_name = "ft245";
+        serial_driver.driver_name = "68681";
         serial_driver.owner = THIS_MODULE;
 #endif
 
@@ -258,9 +212,8 @@ int mackerel_init(void)
 				mackerel_init_port(info, i);
 			}
 
-			printk("Unmasking RX interrupt in DUART\n");
-			MEM(DUART_IVR) = 65;
-			MEM(DUART_IMR) = 0x20; // Unmask RX interrupt in DUART
+			// Unmask RX interrupt in DUART (leave timer interrupt unmasked)
+			MEM(DUART_IMR) = DUART_INTR_COUNTER | DUART_INTR_RXRDY; 
 
 			if (request_irq(VEC_INT1-VEC_SPUR,
 							mackerel_interrupt,
