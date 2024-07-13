@@ -1,48 +1,22 @@
-/*****************************************************************************/
-/* 
- *  crt0_rom.S
- * 
- *  linux/arch/m68knommu/platform/68000/68Katy/rom.ld
- *
-*   68Katy GNU ld command file for running kernel directly from ROM
- *  you probably need an own version of this file for your board
- *
- *  Author:     Steve Chamberlin (steve.chamberlin@gmail.com)
- *
- *  This program is free software;  you can redistribute it and/or modify it
- *  under the  terms of the GNU  General Public License as  published by the
- *  Free Software Foundation.  See the file COPYING in the main directory of
- *  this archive for more details.
- *
- *  This program  is distributed  in the  hope that it  will be  useful, but
- *  WITHOUT   ANY   WARRANTY;  without   even   the   implied  warranty   of
- *  MERCHANTABILITY  or  FITNESS FOR  A  PARTICULAR  PURPOSE.   See the  GNU
- *  General Public License for more details.
- * *
- *  Change history:
- *
- */
- /****************************************************************************/
-
 MEMORY 
 	{
-          /* romvec only used to determinate size of ROM */
-          romvec   : ORIGIN = 0x80000, LENGTH = 0x00
-            
-          /* 68Katy flash memory (480k) */
-          flash    : ORIGIN = 0x100000, LENGTH = 0x80000
-        
-	  /* 68Katy flash memory end */
-          eflash   : ORIGIN = 0x180000, LENGTH = 1
+        /* romvec only used to determinate size of ROM */
+        romvec   : ORIGIN = 0x80000 - 0x2000, LENGTH = 0x00
 
-          /* interrupt vectors in RAM */
-	  ramvec   : ORIGIN = 0x00, LENGTH = 1024
+        /* flash memory (512k) */
+        flash    : ORIGIN = 0x302000, LENGTH = 0x80000 - 0x2000
 
-          /* user RAM memory */
-	  ram      : ORIGIN = 0x400, LENGTH = 0x100000 - 0x400
+	  	/* flash memory end */
+        eflash   : ORIGIN = 0x380000, LENGTH = 1
 
-          /* end of RAM (used to set %sp) */
-	  eram     : ORIGIN = 0x100000, LENGTH = 1
+        /* interrupt vectors in RAM */
+	  	ramvec   : ORIGIN = 0x00, LENGTH = 1024
+
+        /* user RAM memory */
+		ram      : ORIGIN = 0x400, LENGTH = 0x200000 - 0x400
+
+        /* end of RAM (used to set %sp) */
+	    eram     : ORIGIN = 0x200000, LENGTH = 1
 	}
 
 SECTIONS

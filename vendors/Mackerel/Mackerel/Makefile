@@ -3,7 +3,10 @@
 #
 
 ROMFSIMG = $(IMAGEDIR)/romfs.img
-IMAGE    = $(IMAGEDIR)/mackerel.rom
+IMAGE    = $(IMAGEDIR)/linux.bin
+EEPROM_FILE = $(IMAGEDIR)/mackerel.bin
+
+BOOTLOADER_BIN = ../../../../mackerel-68k/firmware/bootloader.bin
 
 ROMFS_DIRS = bin dev etc home lib mnt proc usr var
 
@@ -34,6 +37,7 @@ DEVICES = \
 	ts,c,10,9
 
 clean:
+	rm -f $(EEPROM_FILE)
 
 romfs:
 	[ -d $(ROMFSDIR)/$$i ] || mkdir -p $(ROMFSDIR)
@@ -57,15 +61,13 @@ romfs:
 	$(ROMFSINST) /etc/motd
 
 image:
-	echo "MACKEREL MACKEREL MACKEREL MACKEREL"
 	[ -d $(IMAGEDIR) ] || mkdir -p $(IMAGEDIR)
 	genromfs -v -V "ROMdisk" -f $(ROMFSIMG) -d $(ROMFSDIR)
 	$(CROSS_COMPILE)objcopy -O binary -j .text $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.text
 	$(CROSS_COMPILE)objcopy -O binary -j .data $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.data
 	cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data $(ROMFSIMG) > $(IMAGE)
-	# cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data > $(IMAGE)
-	@perl -e '$$s=sprintf "%d", (((-s "$(IMAGE)")+1023) / 1024); \
-	   die "image too large ($${s}k)\n" if ($$s > 1024); \
-	   printf "image size: %dk\n", $$s;'
 
+	rm -f $(EEPROM_FILE)
 
+	dd conv=notrunc bs=1 if=$(BOOTLOADER_BIN) of=$(EEPROM_FILE) seek=0
+	dd conv=notrunc bs=1 if=$(IMAGE) of=$(EEPROM_FILE) seek=8192
