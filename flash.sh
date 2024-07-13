@@ -4,13 +4,6 @@ PORT=/dev/ttyACM0
 
 ls -lah images
 
-echo "Copying filesystem image..."
-echo "load 180000" > $PORT
-sleep 1
-ctt -p $PORT -f images/romfs.img
-
-sleep 2
-
 echo "Copying Mackerel image..."
 echo "load 100000" > $PORT
 sleep 1
