@@ -303,7 +303,7 @@ struct arena_t {
 } arena[] = {
   {0, 0, -1},
   #define FIXUP_ARENAS \
-          arena[0].address = (unsigned long)0x300000;
+          arena[0].address = (unsigned long)0x180000;
           
 // #ifdef INTERNAL_ROMARRAY
 // 	{0, (unsigned long)romarray, sizeof(romarray)},
