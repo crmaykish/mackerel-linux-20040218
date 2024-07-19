@@ -4,7 +4,6 @@
 
 ROMFSIMG = $(IMAGEDIR)/romfs.img
 IMAGE    = $(IMAGEDIR)/linux.bin
-EEPROM_FILE = $(IMAGEDIR)/mackerel.bin
 
 BOOTLOADER_BIN = ../../../../mackerel-68k/firmware/bootloader.bin
 
@@ -37,7 +36,6 @@ DEVICES = \
 	ts,c,10,9
 
 clean:
-	rm -f $(EEPROM_FILE)
 
 romfs:
 	[ -d $(ROMFSDIR)/$$i ] || mkdir -p $(ROMFSDIR)
@@ -66,8 +64,3 @@ image:
 	$(CROSS_COMPILE)objcopy -O binary -j .text $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.text
 	$(CROSS_COMPILE)objcopy -O binary -j .data $(ROOTDIR)/$(LINUXDIR)/linux $(IMAGEDIR)/linux.data
 	cat $(IMAGEDIR)/linux.text $(IMAGEDIR)/linux.data $(ROMFSIMG) > $(IMAGE)
-
-	rm -f $(EEPROM_FILE)
-
-	dd conv=notrunc bs=1 if=$(BOOTLOADER_BIN) of=$(EEPROM_FILE) seek=0
-	dd conv=notrunc bs=1 if=$(IMAGE) of=$(EEPROM_FILE) seek=8192

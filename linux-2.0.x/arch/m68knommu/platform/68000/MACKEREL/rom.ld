@@ -1,10 +1,10 @@
 MEMORY 
 	{
         /* romvec only used to determinate size of ROM */
-        romvec   : ORIGIN = 0x80000 - 0x2000, LENGTH = 0x00
+        romvec   : ORIGIN = 0x80000, LENGTH = 0x00
 
         /* flash memory (512k) */
-        flash    : ORIGIN = 0x302000, LENGTH = 0x80000 - 0x2000
+        flash    : ORIGIN = 0x300000, LENGTH = 0x80000
 
 	  	/* flash memory end */
         eflash   : ORIGIN = 0x380000, LENGTH = 1
@@ -13,10 +13,10 @@ MEMORY
 	  	ramvec   : ORIGIN = 0x00, LENGTH = 1024
 
         /* user RAM memory */
-		ram      : ORIGIN = 0x400, LENGTH = 0x200000 - 0x400
+		ram      : ORIGIN = 0x400, LENGTH = 0x300000 - 0x400
 
         /* end of RAM (used to set %sp) */
-	    eram     : ORIGIN = 0x200000, LENGTH = 1
+	    eram     : ORIGIN = 0x300000, LENGTH = 1
 	}
 
 SECTIONS
