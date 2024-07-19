@@ -118,6 +118,17 @@ void BSP_reset(void)
 
 void config_BSP(char *command, int len)
 {
+        // Set up the DUART serial port
+	MEM(DUART_IMR) = 0x00;	// Mask all interrupts
+	MEM(DUART_MR1B) = 0x13; // No Rx RTS, No Parity, 8 bits per character
+	MEM(DUART_MR2B) = 0x07; // Channel mode normal, No Tx RTS, No CTS, stop bit length 1
+	MEM(DUART_ACR) = 0x80;	// Baudrate set 2
+	MEM(DUART_CRB) = 0x80;	// Set Rx extended bit
+	MEM(DUART_CRB) = 0xA0;	// Set Tx extended bit
+	MEM(DUART_CSRB) = 0x88; // 115200 baud
+	MEM(DUART_CRB) = 0x05;	// Enable Tx/Rx
+
+
         mackerel_console_initialize();
 
         mach_sched_init = BSP_sched_init;
