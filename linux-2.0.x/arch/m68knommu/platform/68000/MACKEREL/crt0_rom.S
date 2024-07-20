@@ -3,6 +3,10 @@
 .global _boot_stack
 .global boot_entry        
         	.text
+
+	.long 0x380000	/* Initial stack pointer */
+	.long _start	/* Program counter address */
+
 _start:
 _stext:
 
@@ -48,4 +52,3 @@ _exit:
         .data
 env:
 	.long	0
-        
