@@ -1,10 +1,13 @@
 .global _stext
 .global _start
 .global _boot_stack
+.global _ramend
 .global boot_entry        
         	.text
 
-	.long 0x380000	/* Initial stack pointer */
+/*  Normally the bootloader would set up the stack and program counter
+	Don't assume that was done. Set it up at the very start of the Linux code as well */
+	.long _ramend	/* Initial stack pointer */
 	.long _start	/* Program counter address */
 
 _start:
