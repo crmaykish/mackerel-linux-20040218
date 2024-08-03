@@ -1,13 +1,13 @@
 MEMORY 
 	{
         /* romvec only used to determinate size of ROM */
-        romvec   : ORIGIN = 0x70000, LENGTH = 0x00
+        romvec   : ORIGIN = 0x7C000, LENGTH = 0x00
 
         /* flash memory (512k) */
-        flash    : ORIGIN = 0x380000, LENGTH = 0x70000
+        flash    : ORIGIN = 0x380000, LENGTH = 0x7C000
 
 	  	/* flash memory end */
-        eflash   : ORIGIN = 0x3F0000, LENGTH = 1
+        eflash   : ORIGIN = 0x3FC000, LENGTH = 1
 
         /* interrupt vectors in RAM */
 	  	ramvec   : ORIGIN = 0x00, LENGTH = 1024
